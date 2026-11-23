@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>掲示板 | STUDIO AD4</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:Arial,"Meiryo",sans-serif;
+ background:linear-gradient(130deg,#04114e,#4669b1,#102d78);
+ color:#15264e;
+ min-height:100vh;
+}
+
+header{
+ background:linear-gradient(90deg,#000d50,#17287b,#f7a36b);
+ border-bottom:5px ridge #a8c9ff;
+ padding:20px;
+ color:white;
+}
+
+.logo{
+ font-size:clamp(30px,6vw,54px);
+ font-weight:900;
+ font-style:italic;
+ color:white;
+ text-decoration:none;
+}
+
+.logo span{color:#ffe321}
+
+header p{
+ margin:0;
+ font-size:12px;
+ letter-spacing:2px;
+}
+
+main{
+ max-width:1000px;
+ margin:20px auto;
+ padding:0 12px;
+}
+
+.panel{
+ background:#edf1f9;
+ border:5px ridge #b5c9ee;
+ border-radius:7px;
+ padding:16px;
+ margin-bottom:15px;
+}
+
+h1{
+ background:linear-gradient(#183b91,#001456);
+ color:white;
+ padding:12px;
+ margin:-16px -16px 18px;
+ font-size:24px;
+}
+
+h2{
+ color:#102b70;
+ border-bottom:2px solid #9eafd0;
+ padding-bottom:8px;
+}
+
+.post{
+ background:#fff;
+ border:1px solid #9eafd0;
+ padding:15px;
+ margin:12px 0;
+}
+
+.post-head{
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px;
+ align-items:center;
+}
+
+.work{
+ background:#173b91;
+ color:white;
+ padding:5px 9px;
+ border-radius:4px;
+ font-weight:bold;
+}
+
+.category{
+ color:#475b83;
+ font-size:13px;
+}
+
+.date{
+ color:#69758b;
+ font-size:12px;
+}
+
+.post-body{
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+ line-height:1.7;
+}
+
+.reply{
+ background:#fff6d8;
+ border-left:4px solid #c68b16;
+ padding:12px;
+ margin-top:12px;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+}
+
+label{
+ display:block;
+ font-weight:bold;
+ margin:15px 0 6px;
+}
+
+input,select,textarea{
+ width:100%;
+ max-width:650px;
+ padding:11px;
+ font:inherit;
+ border:2px solid #9baed4;
+ background:white;
+}
+
+textarea{
+ min-height:120px;
+ resize:vertical;
+}
+
+button,.button{
+ display:inline-block;
+ background:linear-gradient(#fff1a0,#e7a52c);
+ border:2px outset #ffe7a6;
+ border-radius:5px;
+ padding:11px 22px;
+ font-weight:bold;
+ color:#17213d;
+ cursor:pointer;
+ text-decoration:none;
+ margin-top:12px;
+}
+
+button:disabled{
+ opacity:.5;
+ cursor:not-allowed;
+}
+
+.notice{
+ background:#fff6d8;
+ border-left:4px solid #c68b16;
+ padding:12px;
+ line-height:1.6;
+}
+
+#message{
+ margin-top:12px;
+ white-space:pre-wrap;
+}
+
+.error{color:#b00020}
+
+footer{
+ text-align:center;
+ color:white;
+ padding:25px;
+ font-size:13px;
+}
+
+@media(max-width:600px){
+ .panel{padding:12px}
+ h1{margin:-12px -12px 15px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<a class="logo" href="/">
+STUDIO <span>AD4</span>
+</a>
+<p>GAME &amp; COMIC SOFTWARE HOUSE</p>
+</header>
+
+<main>
+
+<div class="panel">
+
+<h1>BBS｜みんなの掲示板</h1>
+
+<p>
+STUDIO AD4のゲーム・漫画への感想、改善要望、
+不具合報告などを自由に投稿できます。
+</p>
+
+<p>
+会員登録は不要です。
+投稿は管理者が確認した後に公開されます。
+</p>
+
+<a class="button" href="/">← ホームページに戻る</a>
+
+</div>
+
+<div class="panel">
+
+<h2>投稿一覧</h2>
+
+<div id="posts">読み込み中…</div>
+
+<button id="more" hidden type="button">
+過去の投稿を表示
+</button>
+
+</div>
+
+<div class="panel">
+
+<h2>新しく書き込む</h2>
+
+<div class="notice">
+作品名は候補から選ぶか、直接入力してください。
+新しい作品名も入力できます。
+個人情報は書き込まないでください。
+</div>
+
+<form id="form">
+
+<label for="work">作品名</label>
+
+<input
+ id="work"
+ list="workList"
+ maxlength="80"
+ placeholder="作品名を選択または入力"
+ required
+>
+
+<datalist id="workList"></datalist>
+
+<label for="name">お名前（任意）</label>
+
+<input
+ id="name"
+ maxlength="30"
+ placeholder="匿名でもOK"
+>
+
+<label for="category">投稿の種類</label>
+
+<select id="category">
+<option>感想</option>
+<option>改善要望</option>
+<option>不具合報告</option>
+</select>
+
+<label for="body">内容</label>
+
+<textarea
+ id="body"
+ maxlength="2000"
+ minlength="2"
+ placeholder="感想や改善案など"
+ required
+></textarea>
+
+<div style="position:absolute;left:-9999px" aria-hidden="true">
+<label for="website">ウェブサイト</label>
+<input id="website" tabindex="-1" autocomplete="off">
+</div>
+
+<br>
+
+<button id="submit" type="submit">
+投稿する
+</button>
+
+<p id="message" role="status"></p>
+
+</form>
+
+</div>
+
+</main>
+
+<footer>
+© STUDIO AD4. All Rights Reserved.
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const initialWorks = [
+ 'STUDIO AD4全般',
+ 'ノボル2',
+ '最後の1秒。ラストコード',
+ '装甲機動兵器バイアーム',
+ '叫べ！俺の必殺技',
+ '名探偵犬アーサー',
+ 'ガムテープ勇者試験',
+ 'D-06号'
+];
+
+let nextCursor = null;
+let loading = false;
+
+function updateWorks(approvedWorks = []) {
+ const list = $('workList');
+ list.replaceChildren();
+
+ const works = [...new Set([
+  ...initialWorks,
+  ...approvedWorks
+ ])];
+
+ for(const work of works){
+  const option = document.createElement('option');
+  option.value = work;
+  list.append(option);
+ }
+}
+
+function renderPosts(posts, reset) {
+ const box = $('posts');
+
+ if(reset) box.replaceChildren();
+
+ if(reset && posts.length === 0){
+  box.textContent = '公開済みの投稿はまだありません。';
+  return;
+ }
+
+ for(const p of posts){
+  const article = document.createElement('article');
+  article.className = 'post';
+
+  const head = document.createElement('div');
+  head.className = 'post-head';
+
+  const work = document.createElement('span');
+  work.className = 'work';
+  work.textContent = p.work;
+
+  const name = document.createElement('strong');
+  name.textContent = p.name || '匿名';
+
+  const category = document.createElement('span');
+  category.className = 'category';
+  category.textContent = '[' + p.category + ']';
+
+  const date = document.createElement('time');
+  date.className = 'date';
+  date.textContent = p.created_at || '';
+
+  head.append(work,name,category,date);
+
+  const body = document.createElement('p');
+  body.className = 'post-body';
+  body.textContent = p.body;
+
+  article.append(head,body);
+
+  if(p.reply){
+   const reply = document.createElement('div');
+   reply.className = 'reply';
+   reply.textContent = 'STUDIO AD4からの返信\n' + p.reply;
+   article.append(reply);
+  }
+
+  box.append(article);
+ }
+}
+
+async function loadPosts(reset = false) {
+ if(loading) return;
+
+ loading = true;
+
+ const more = $('more');
+ more.hidden = true;
+ more.disabled = true;
+
+ if(reset){
+  nextCursor = null;
+  $('posts').textContent = '読み込み中…';
+ }
+
+ try{
+  const params = new URLSearchParams();
+
+  if(!reset && nextCursor){
+   params.set('before',nextCursor);
+  }
+
+  const url = '/api/posts' +
+   (params.toString() ? '?' + params.toString() : '');
+
+  const response = await fetch(url);
+
+  const data = await response.json();
+
+  if(!response.ok){
+   throw Error(data.error || '取得に失敗しました');
+  }
+
+  renderPosts(data.posts || [],reset);
+
+  updateWorks(data.works || []);
+
+  nextCursor = data.nextCursor || null;
+
+  more.hidden = !nextCursor;
+
+ }catch(error){
+  if(reset){
+   $('posts').textContent =
+    '投稿一覧を読み込めませんでした。';
+  }
+
+  $('message').textContent = error.message;
+  $('message').className = 'error';
+
+ }finally{
+  loading = false;
+  more.disabled = false;
+ }
+}
+
+$('more').addEventListener('click',()=>{
+ loadPosts(false);
+});
+
+$('form').addEventListener('submit',async event=>{
+ event.preventDefault();
+
+ const button = $('submit');
+ button.disabled = true;
+
+ $('message').textContent = '送信中…';
+ $('message').className = '';
+
+ try{
+  const response = await fetch('/api/posts',{
+   method:'POST',
+   headers:{
+    'Content-Type':'application/json'
+   },
+   body:JSON.stringify({
+    work:$('work').value.trim(),
+    name:$('name').value,
+    category:$('category').value,
+    body:$('body').value,
+    website:$('website').value
+   })
+  });
+
+  const data = await response.json();
+
+  if(!response.ok){
+   throw Error(data.error || '投稿できませんでした');
+  }
+
+  $('body').value = '';
+
+  $('message').textContent =
+   '投稿を受け付けました。管理者の承認後に公開されます。';
+
+ }catch(error){
+  $('message').textContent = error.message;
+  $('message').className = 'error';
+
+ }finally{
+  button.disabled = false;
+ }
+});
+
+updateWorks();
+loadPosts(true);
+</script>
+
+</body>
+</html>
