@@ -89,7 +89,95 @@ footer{
   color:#7895a7;
   font-size:12px;
 }
-</style>
+/* STUDIO AD4 共通デザイン */
+body {
+  background: linear-gradient(130deg, #04114e, #4669b1 50%, #102d78);
+  color: #101c3a;
+}
+
+header {
+  background: linear-gradient(90deg, #000d50 40%, #17287b 75%, #f7a36b);
+  border-bottom: 5px ridge #a8c9ff;
+}
+
+nav {
+  position: fixed;
+  top: 100px;
+  left: 18px;
+  width: 205px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+nav a {
+  display: block;
+  background: linear-gradient(#fff, #cbd6ed);
+  border: 4px ridge #e3eaff;
+  border-radius: 5px;
+  padding: 12px 8px;
+  color: #071b45;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: left;
+  text-decoration: none;
+}
+
+nav a:hover {
+  background: linear-gradient(#dd8a20, #8e0a09);
+  color: white;
+}
+
+main {
+  margin: 25px 18px 25px 235px;
+  max-width: none;
+  background: #edf1f9;
+  border: 5px ridge #b5c9ee;
+  border-radius: 7px;
+  padding: 20px;
+  min-height: 500px;
+}
+
+main h1 {
+  background: linear-gradient(#183b91, #001456);
+  color: white;
+  padding: 12px;
+  border: none;
+  font-size: 23px;
+}
+
+main .description {
+  color: #354b72;
+}
+
+article {
+  background: white;
+  color: #101c3a;
+}
+
+footer {
+  margin-left: 235px;
+  color: #d7e5ff;
+}
+
+@media (max-width: 750px) {
+  nav {
+    position: static;
+    width: auto;
+    margin: 10px 14px;
+  }
+
+  main {
+    margin: 12px;
+  }
+
+  footer {
+    margin-left: 0;
+  }
+}</style>
 </head>
 
 <body>
@@ -100,10 +188,12 @@ footer{
 </header>
 
 <nav>
-  <a href="index.html">HOME</a>
-  <a href="index.html#games">GAMES</a>
-  <a href="diary.html">制作日誌</a>
-  <a href="bbs.html">BBS</a>
+  <a href="index.html#news">NEWS｜新着・更新情報</a>
+  <a href="index.html#games">GAMES｜ゲーム作品</a>
+  <a href="index.html#comics">COMICS｜漫画作品</a>
+  <a href="diary.html">DEVELOPMENT｜制作日誌</a>
+  <a href="bbs.html">BBS｜みんなの掲示板</a>
+  <a href="index.html#about">ABOUT｜スタジオ紹介</a>
 </nav>
 
 <main>
