@@ -247,6 +247,36 @@ article {
   border: 2px solid #9caed5;
   border-radius: 5px;
   padding: 20px;
+}/* メインサイトとの最終位置調整 */
+nav {
+  top: 201px;
+  width: 175px;
+}
+
+main {
+  margin-top: 12px;
+  margin-left: max(205px, calc((100vw - 1300px) / 2 + 205px));
+  margin-right: max(18px, calc((100vw - 1300px) / 2));
+  max-width: none;
+}
+
+header .logo {
+  font-size: 64px;
+}
+
+header .logo-ad4 {
+  color: #ffe321;
+}
+
+@media (max-width: 750px) {
+  nav {
+    position: static;
+    width: auto;
+  }
+
+  main {
+    margin: 12px;
+  }
 }</style>
 </head>
 
