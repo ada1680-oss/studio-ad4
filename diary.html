@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>制作日誌 | STUDIO AD4</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#071521;
+  color:#e8f2fa;
+  font-family:"Meiryo",sans-serif;
+}
+header{
+  background:linear-gradient(135deg,#183e58,#091824);
+  border-bottom:3px solid #6ca5c5;
+  padding:25px 16px;
+  text-align:center;
+}
+.logo{
+  font-size:28px;
+  font-weight:bold;
+  letter-spacing:3px;
+  color:#d9eaf5;
+}
+.subtitle{
+  color:#91b5ca;
+  font-size:13px;
+  margin-top:6px;
+}
+nav{
+  background:#102b3d;
+  padding:13px;
+  text-align:center;
+}
+nav a{
+  color:#d7e9f4;
+  text-decoration:none;
+  margin:0 12px;
+}
+nav a:hover{color:white;text-decoration:underline}
+main{
+  max-width:900px;
+  margin:35px auto;
+  padding:0 18px;
+}
+h1{
+  border-left:5px solid #73b8dc;
+  padding-left:15px;
+  font-size:26px;
+}
+.description{color:#a9c0cf;line-height:1.8}
+#diary-list{margin-top:30px}
+article{
+  background:#102b3e;
+  border:1px solid #426780;
+  border-radius:8px;
+  padding:24px;
+  margin-bottom:22px;
+}
+.date{color:#9bb6c9;font-size:13px}
+.category{
+  display:inline-block;
+  background:#285a78;
+  padding:4px 10px;
+  border-radius:4px;
+  font-size:12px;
+  margin-left:10px;
+}
+article h2{font-size:21px;margin:14px 0}
+article p{line-height:1.9;white-space:pre-wrap}
+article img{
+  max-width:100%;
+  height:auto;
+  border-radius:5px;
+  margin-top:12px;
+}
+.empty{
+  text-align:center;
+  color:#a9c0cf;
+  padding:45px 15px;
+  border:1px dashed #426780;
+}
+footer{
+  text-align:center;
+  padding:30px 10px;
+  color:#7895a7;
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">STUDIO AD4</div>
+  <div class="subtitle">GAME DEVELOPMENT STUDIO</div>
+</header>
+
+<nav>
+  <a href="index.html">HOME</a>
+  <a href="index.html#games">GAMES</a>
+  <a href="diary.html">制作日誌</a>
+  <a href="bbs.html">BBS</a>
+</nav>
+
+<main>
+  <h1>DEVELOPMENT DIARY｜制作日誌</h1>
+
+  <p class="description">
+    STUDIO AD4のゲーム制作状況や開発の裏話、
+    新作情報などをお届けします。
+  </p>
+
+  <div id="diary-list">
+    <div class="empty">
+      制作日誌は準備中です。<br>
+      最初の記事をお待ちください。
+    </div>
+  </div>
+</main>
+
+<footer>
+  © STUDIO AD4
+</footer>
+
+</body>
+</html>
