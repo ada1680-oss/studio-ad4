@@ -125,6 +125,72 @@ footer{
 <footer>
   © STUDIO AD4
 </footer>
+<script>
+async function loadDiary() {
+  const list = document.getElementById("diary-list");
 
+  try {
+    const response = await fetch("/api/diary", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("記事の取得に失敗");
+    }
+
+    const data = await response.json();
+    list.replaceChildren();
+
+    if (!data.posts || data.posts.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "制作日誌は準備中です。";
+      list.appendChild(empty);
+      return;
+    }
+
+    for (const post of data.posts) {
+      const article = document.createElement("article");
+
+      const date = document.createElement("div");
+      date.className = "date";
+      date.textContent = post.created_at || "";
+
+      const category = document.createElement("span");
+      category.className = "category";
+      category.textContent = post.category || "制作日誌";
+      date.appendChild(category);
+
+      const title = document.createElement("h2");
+      title.textContent = post.title;
+
+      const content = document.createElement("p");
+      content.textContent = post.content;
+
+      article.append(date, title, content);
+
+      if (post.image_url) {
+        const img = document.createElement("img");
+        img.src = post.image_url;
+        img.alt = post.title;
+        img.loading = "lazy";
+        article.appendChild(img);
+      }
+
+      list.appendChild(article);
+    }
+
+  } catch (error) {
+    list.replaceChildren();
+
+    const message = document.createElement("div");
+    message.className = "empty";
+    message.textContent = "制作日誌を読み込めませんでした。";
+    list.appendChild(message);
+  }
+}
+
+loadDiary();
+</script>
 </body>
 </html>
