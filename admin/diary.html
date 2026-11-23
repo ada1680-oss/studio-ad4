@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>制作日誌 管理画面 | STUDIO AD4</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#294781;color:#10264b;font-family:Meiryo,sans-serif}
+header{background:linear-gradient(#183b8d,#071c58);color:white;padding:18px;text-align:center;border-bottom:4px solid #b9c9e5}
+header h1{margin:0;font-size:25px}
+header p{margin:5px 0;font-size:13px}
+main{max-width:900px;margin:25px auto;padding:0 15px}
+.panel{background:#edf2fb;border:3px ridge #c4d4ef;border-radius:7px;padding:20px;margin-bottom:20px}
+h2{font-size:19px;border-bottom:2px solid #8ba5d3;padding-bottom:10px}
+label{display:block;font-weight:bold;margin:15px 0 6px}
+input,select,textarea{width:100%;padding:11px;font:inherit;border:1px solid #8ca3c6;border-radius:4px;background:white}
+textarea{min-height:230px;resize:vertical;line-height:1.7}
+button{padding:11px 18px;border:1px solid #9a741d;border-radius:5px;background:linear-gradient(#ffe99b,#e5a92d);font-weight:bold;cursor:pointer;margin:7px 7px 7px 0}
+button:disabled{opacity:.5;cursor:wait}
+.secondary{background:linear-gradient(#fff,#ccd8ed);border-color:#7890b6}
+.danger{background:#b93636;color:white;border-color:#852222}
+.hidden{display:none}
+.message{padding:12px;margin:12px 0;border-radius:4px;background:#dbe6f6;white-space:pre-wrap}
+.error{background:#ffe0e0;color:#8a1010}
+.item{border:1px solid #a7b9d6;background:white;padding:15px;margin:12px 0;border-radius:5px}
+.item h3{margin:5px 0}
+.small{font-size:12px;color:#536784}
+a{color:#173d89}
+</style>
+</head>
+<body>
+
+<header>
+<h1>STUDIO AD4</h1>
+<p>DEVELOPMENT DIARY｜管理者専用</p>
+</header>
+
+<main>
+
+<section class="panel" id="login-panel">
+<h2>管理者認証</h2>
+<p>掲示板の管理画面で使用している管理者トークンを入力してください。</p>
+<label for="token">管理者トークン</label>
+<input id="token" type="password" autocomplete="off">
+<button id="login-btn">ログイン</button>
+<div id="login-message" class="message hidden" role="status"></div>
+</section>
+
+<div id="admin-area" class="hidden">
+
+<section class="panel">
+<h2 id="form-heading">制作日誌・新規投稿</h2>
+
+<form id="diary-form">
+<input type="hidden" id="post-id">
+
+<label for="title">記事タイトル</label>
+<input id="title" maxlength="200" required>
+
+<label for="category">カテゴリー</label>
+<select id="category">
+<option value="制作日誌">制作日誌</option>
+<option value="開発報告">開発報告</option>
+<option value="お知らせ">お知らせ</option>
+</select>
+
+<label for="content">本文</label>
+<textarea id="content" maxlength="20000" required></textarea>
+
+<label for="image-url">画像URL（任意）</label>
+<input id="image-url" placeholder="/images/example.png">
+<p class="small">画像を掲載する場合は、公開済み画像のURLを入力します。</p>
+
+<button type="submit" id="save-btn">記事を公開する</button>
+<button type="button" class="secondary" id="cancel-btn">入力を取り消す</button>
+</form>
+
+<div id="form-message" class="message hidden" role="status"></div>
+</section>
+
+<section class="panel">
+<h2>投稿済みの記事</h2>
+<button class="secondary" id="refresh-btn">一覧を更新</button>
+<div id="post-list"></div>
+</section>
+
+<section class="panel">
+<button class="secondary" id="logout-btn">ログアウト</button>
+<p><a href="../diary.html">一般公開の制作日誌を見る →</a></p>
+<p><a href="../index.html">ホームページへ戻る →</a></p>
+</section>
+
+</div>
+</main>
+
+<script>
+let adminToken = "";
+let posts = [];
+
+const $ = id => document.getElementById(id);
+
+function showMessage(id, text, error = false) {
+  const el = $(id);
+  el.textContent = text;
+  el.className = "message" + (error ? " error" : "");
+}
+
+function hideMessage(id) {
+  $(id).className = "message hidden";
+}
+
+async function api(method, body) {
+  const response = await fetch("/api/admin/diary", {
+    method,
+    headers: {
+      "Authorization": "Bearer " + adminToken,
+      ...(body ? {"Content-Type": "application/json"} : {})
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    cache: "no-store"
+  });
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error("サーバーから正しい応答がありません");
+  }
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("管理者認証に失敗しました");
+    }
+    throw new Error(data.error || "通信に失敗しました");
+  }
+
+  return data;
+}
+
+async function loadPosts() {
+  const data = await api("GET");
+  posts = data.posts || [];
+  renderPosts();
+}
+
+function renderPosts() {
+  const list = $("post-list");
+  list.replaceChildren();
+
+  if (posts.length === 0) {
+    const p = document.createElement("p");
+    p.textContent = "投稿された記事はありません。";
+    list.appendChild(p);
+    return;
+  }
+
+  for (const post of posts) {
+    const item = document.createElement("div");
+    item.className = "item";
+
+    const date = document.createElement("div");
+    date.className = "small";
+    date.textContent =
+      (post.created_at || "") + "｜" + (post.category || "");
+
+    const title = document.createElement("h3");
+    title.textContent = post.title;
+
+    const edit = document.createElement("button");
+    edit.textContent = "編集";
+    edit.className = "secondary";
+    edit.addEventListener("click", () => editPost(post.id));
+
+    const del = document.createElement("button");
+    del.textContent = "削除";
+    del.className = "danger";
+    del.addEventListener("click", () => deletePost(post.id));
+
+    item.append(date, title, edit, del);
+    list.appendChild(item);
+  }
+}
+
+function resetForm() {
+  $("diary-form").reset();
+  $("post-id").value = "";
+  $("form-heading").textContent = "制作日誌・新規投稿";
+  $("save-btn").textContent = "記事を公開する";
+  hideMessage("form-message");
+}
+
+function editPost(id) {
+  const post = posts.find(p => Number(p.id) === Number(id));
+  if (!post) return;
+
+  $("post-id").value = post.id;
+  $("title").value = post.title || "";
+  $("category").value = post.category || "制作日誌";
+  $("content").value = post.content || "";
+  $("image-url").value = post.image_url || "";
+
+  $("form-heading").textContent = "記事を編集";
+  $("save-btn").textContent = "変更を保存する";
+  hideMessage("form-message");
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+async function deletePost(id) {
+  const post = posts.find(p => Number(p.id) === Number(id));
+  if (!post) return;
+
+  if (!confirm("「" + post.title + "」を削除しますか？\nこの操作は取り消せません。")) {
+    return;
+  }
+
+  try {
+    await api("DELETE", {id});
+    if (Number($("post-id").value) === Number(id)) {
+      resetForm();
+    }
+    await loadPosts();
+    alert("記事を削除しました。");
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+$("login-btn").addEventListener("click", async () => {
+  const token = $("token").value.trim();
+
+  if (!token) {
+    showMessage("login-message", "管理者トークンを入力してください。", true);
+    return;
+  }
+
+  adminToken = token;
+  $("login-btn").disabled = true;
+
+  try {
+    await loadPosts();
+    $("token").value = "";
+    $("login-panel").classList.add("hidden");
+    $("admin-area").classList.remove("hidden");
+  } catch (error) {
+    adminToken = "";
+    showMessage("login-message", error.message, true);
+  } finally {
+    $("login-btn").disabled = false;
+  }
+});
+
+$("diary-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const id = $("post-id").value;
+
+  const data = {
+    title: $("title").value.trim(),
+    category: $("category").value,
+    content: $("content").value.trim(),
+    image_url: $("image-url").value.trim()
+  };
+
+  if (id) data.id = Number(id);
+
+  if (!data.title || !data.content) {
+    showMessage("form-message", "タイトルと本文を入力してください。", true);
+    return;
+  }
+
+  if (!confirm(id ? "この記事の変更を保存しますか？" : "この記事を公開しますか？")) {
+    return;
+  }
+
+  $("save-btn").disabled = true;
+
+  try {
+    await api(id ? "PUT" : "POST", data);
+    resetForm();
+    await loadPosts();
+    showMessage("form-message", id ? "記事を更新しました。" : "記事を公開しました。");
+  } catch (error) {
+    showMessage("form-message", error.message, true);
+  } finally {
+    $("save-btn").disabled = false;
+  }
+});
+
+$("cancel-btn").addEventListener("click", resetForm);
+
+$("refresh-btn").addEventListener("click", async () => {
+  try {
+    await loadPosts();
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+$("logout-btn").addEventListener("click", () => {
+  adminToken = "";
+  posts = [];
+  resetForm();
+  $("admin-area").classList.add("hidden");
+  $("login-panel").classList.remove("hidden");
+  hideMessage("login-message");
+});
+</script>
+
+</body>
+</html>
