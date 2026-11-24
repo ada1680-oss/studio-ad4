@@ -293,7 +293,46 @@ nav {
     padding: 12px 8px;
     line-height: 1.4;
   }
-}</style>
+}
+
+@media (max-width: 750px) {
+  header {
+    padding: 18px 16px;
+    text-align: left;
+  }
+
+  .logo {
+    font-size: 32px;
+    letter-spacing: -1px;
+    white-space: nowrap;
+  }
+
+  .subtitle {
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  nav {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: auto;
+    min-width: 0;
+    margin: 12px;
+    padding: 0;
+  }
+
+  nav a {
+    font-size: 12px;
+    padding: 16px 4px;
+    text-align: center;
+    line-height: 1.4;
+    margin: 0;
+  }
+}
+</style>
 </head>
 
 <body>
