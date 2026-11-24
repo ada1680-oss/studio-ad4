@@ -120,5 +120,20 @@ footer{text-align:center;padding:30px;color:#c3d1d8}
 </main>
 
 <footer>© STUDIO AD4</footer>
+<script>
+fetch('/api/game-stats', {cache: 'no-store'})
+  .then(response => {
+    if (!response.ok) throw new Error();
+    return response.json();
+  })
+  .then(data => {
+    const game = data.games.find(g => g.game_id === 'arthur');
+    document.getElementById('playCount').textContent =
+      (game ? game.play_count : 0).toLocaleString('ja-JP') + '回';
+  })
+  .catch(() => {
+    document.getElementById('playCount').textContent = '取得できません';
+  });
+</script>
 </body>
 </html>
