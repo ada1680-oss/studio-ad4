@@ -177,7 +177,11 @@ footer{
  .panel{padding:12px}
  h1{margin:-12px -12px 15px}
 }
-.site-nav {   display: flex;   flex-direction: column;   gap: 6px;   width: 205px;   padding: 0; }  .site-nav a {   display: block;   background: linear-gradient(#ffffff, #c6d2e9);   border: 4px ridge #dbe4f5;   border-radius: 5px;   color: #102348;   font-size: 15px;   font-weight: bold;   text-decoration: none;   padding: 12px 8px;   text-align: center;   line-height: 1.4; }  .site-nav a:hover {   background: linear-gradient(#e9a52b, #a52600);   color: white; }  @media (min-width: 751px) {   .site-nav {     position: absolute;     top: 156px;     left: 18px;   }    main {     margin-left: 240px;     margin-right: 18px;     width: auto; max-width: none;  } }  @media (max-width: 750px) {   .site-nav {     position: static;     display: grid;     grid-template-columns: repeat(2, minmax(0, 1fr));     gap: 8px;     width: auto;     margin: 12px;   }    .site-nav a {     font-size: 12px;     padding: 12px 4px;   } } </style>
+.site-nav {   display: flex;   flex-direction: column;   gap: 6px;   width: 205px;   padding: 0; }  .site-nav a {   display: block;   background: linear-gradient(#ffffff, #c6d2e9);   border: 4px ridge #dbe4f5;   border-radius: 5px;   color: #102348;   font-size: 15px;   font-weight: bold;   text-decoration: none;   padding: 12px 8px;   text-align: center;   line-height: 1.4; }  .site-nav a:hover {   background: linear-gradient(#e9a52b, #a52600);   color: white; }  @media (min-width: 751px) {   .site-nav {     position: absolute;     top: 156px;     left: 18px;   }    main {     margin-left: 240px;     margin-right: 18px;     width: auto; max-width: none;  } }  @media (max-width: 750px) {   .site-nav {     position: static;     display: grid;     grid-template-columns: repeat(2, minmax(0, 1fr));     gap: 8px;     width: auto;     margin: 12px;   }    .site-nav a {
+    font-size: 11px;
+    padding: 12px 4px;
+    white-space: nowrap;
+}   } } </style>
 </head>
 
 <body>
