@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>STUDIO AD4 総合管理画面</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #0b1426;
+  color: #ffffff;
+  font-family: sans-serif;
+}
+header {
+  background: #152d50;
+  padding: 24px;
+  text-align: center;
+  border-bottom: 3px solid #4285c5;
+}
+h1 { margin: 0; font-size: 26px; }
+main {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+section {
+  background: #17263c;
+  border: 1px solid #395675;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+h2 { margin-top: 0; font-size: 20px; }
+a.button {
+  display: block;
+  background: #245b91;
+  color: white;
+  padding: 16px;
+  margin: 10px 0;
+  text-decoration: none;
+  text-align: center;
+  border-radius: 6px;
+}
+a.button:hover { background: #367cb9; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #395675;
+  text-align: left;
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #9aabc0;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>STUDIO AD4</h1>
+  <p>総合管理画面</p>
+</header>
+
+<main>
+
+<section>
+  <h2>サイト管理</h2>
+  <a class="button" href="/admin.html">掲示板管理</a>
+  <a class="button" href="/admin/diary.html">制作日誌管理</a>
+</section>
+
+<section>
+  <h2>ゲーム別累計プレイ回数</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ゲーム名</th>
+        <th>プレイ回数</th>
+      </tr>
+    </thead>
+    <tbody id="gameStats">
+      <tr><td colspan="2">集計中...</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>アクセス解析</h2>
+  <p>現在準備中</p>
+</section>
+
+<section>
+  <h2>関連ページ</h2>
+  <a class="button" href="/">ホームページ</a>
+  <a class="button" href="https://github.com/ada1680-oss/studio-ad4">GitHub</a>
+  <a class="button" href="https://dash.cloudflare.com/">Cloudflare</a>
+</section>
+
+</main>
+
+<footer>STUDIO AD4 MANAGEMENT SYSTEM</footer>
+
+<script>
+const names = {
+  arthur: 'アーサーの大脱走'
+};
+
+fetch('/api/game-stats', {cache: 'no-store'})
+  .then(response => {
+    if (!response.ok) throw new Error();
+    return response.json();
+  })
+  .then(data => {
+    const tbody = document.getElementById('gameStats');
+    tbody.replaceChildren();
+
+    const games = new Map([['arthur', 0]]);
+    data.games.forEach(game => {
+      games.set(game.game_id, game.play_count);
+    });
+
+    games.forEach((count, id) => {
+      const row = tbody.insertRow();
+      row.insertCell().textContent = names[id] || id;
+      row.insertCell().textContent =
+        Number(count).toLocaleString('ja-JP') + '回';
+    });
+  })
+  .catch(() => {
+    document.getElementById('gameStats').textContent =
+      'データを取得できませんでした';
+  });
+</script>
+
+</body>
+</html>
